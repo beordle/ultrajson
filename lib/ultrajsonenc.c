@@ -710,21 +710,26 @@ static void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t c
           return;
         }
 
-        if (count > 0)
-        {
-          Buffer_AppendCharUnchecked (enc, ',');
-#ifndef JSON_NO_EXTRA_WHITESPACE
-          Buffer_AppendCharUnchecked (enc, ' ');
-#endif
-          Buffer_AppendIndentNewlineUnchecked (enc);
-        }
+
 
         iterObj = enc->iterGetValue(obj, &tc);
         objName = enc->iterGetName(obj, &tc, &szlen);
 
-        enc->level ++;
-        Buffer_AppendIndentUnchecked (enc, enc->level);
-        encode (iterObj, enc, objName, szlen);
+        if ((objName[0])!='_')
+        {
+          if (count > 0)
+          {
+            Buffer_AppendCharUnchecked (enc, ',');
+          #ifndef JSON_NO_EXTRA_WHITESPACE
+            Buffer_AppendCharUnchecked (enc, ' ');
+          #endif
+            Buffer_AppendIndentNewlineUnchecked (enc);
+          }
+          enc->level ++;
+          Buffer_AppendIndentUnchecked (enc, enc->level);
+          encode (iterObj, enc, objName, szlen);
+
+        }
         count ++;
       }
 
